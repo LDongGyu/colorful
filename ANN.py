@@ -5,6 +5,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 import tensorflow as tf
 
+
+
 x_data = np.array([[0,0],[0,1],[1,0],[1,1]],dtype=np.float32)
 y_data = np.array([[0],[1],[1],[0]],dtype=np.float32)
 X = tf.placeholder(tf.float32)

@@ -2,7 +2,15 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+import numpy as np
 import tensorflow as tf
+
+data = np.loadtxt("cocktail.csv", delimiter="\t", dtype=np.int32, encoding='UTF8')
+x = data[:,0:-1]
+y = data[:, [-1]]
+
+print("x : ",x)
+print("y : ",y)
 
 x_data = [[1,2,1,1],[2,1,3,2],[3,1,3,4],[4,1,5,5],[1,7,5,5],[1,2,5,6],[1,6,6,6],[1,7,7,7]]
 y_data = [[0,0,1],[0,0,1],[0,0,1],[0,1,0],[0,1,0],[0,1,0],[1,0,0],[1,0,0]]
