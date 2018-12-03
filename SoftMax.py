@@ -5,7 +5,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 import tensorflow as tf
 
-type = int(input("type을 설정해주세요 (1. 입맛으로 추천, 2. 비슷한 유저로 추천) : "))
+type = int(input("type을 설정해주세요 (1. 입맛으로 추천, 2. 비슷한 유저로 추천, 3. 칵테일 정보보기) : "))
 
 if type == 1:
 
@@ -41,13 +41,13 @@ if type == 1:
         recommend1 = sess.run(cocktail_hypothesis, feed_dict={cocktail_X: [[taste, alchol, soda ,mouthfeel, base]]})
         print("cocktail recommend : ",sess.run(tf.argmax(recommend1,1)+1))
 
-else:
+elif type==2:
 
-    drink1 = int(input("1번째 선호하는 술 : "))
-    drink2 = int(input("2번째 선호하는 술 : "))
-    drink3 = int(input("3번째 선호하는 술 : "))
-    drink4 = int(input("4번째 선호하는 술 : "))
-    drink5 = int(input("5번째 선호하는 술 : "))
+    drink1 = float(input("1번째 선호하는 술 : ")/10)
+    drink2 = float(input("2번째 선호하는 술 : ")/10)
+    drink3 = float(input("3번째 선호하는 술 : ")/10)
+    drink4 = float(input("4번째 선호하는 술 : ")/10)
+    drink5 = float(input("5번째 선호하는 술 : ")/10)
 
     user_data = np.loadtxt('user2.csv', delimiter=',', dtype=np.float32)
     user_x_data = user_data[:, 0:5]
@@ -72,5 +72,8 @@ else:
             sess.run(user_optimizer, feed_dict={user_X:user_x_data,user_Y:user_y_data})
             if step % 400 == 0:
                 print(step, sess.run(user_cost, feed_dict={user_X:user_x_data,user_Y:user_y_data}))
-        recommend2 = sess.run(user_hypothesis, feed_dict={user_X: [[0.3, 0.4, 2 ,2.5, 3]]})
+        recommend2 = sess.run(user_hypothesis, feed_dict={user_X: [[drink1, drink2, drink3 ,drink4, drink5]]})
         print("user recommend : ", sess.run(tf.argmax(recommend2,1)+1))
+
+else:
+    cocktail_num = int(input("보고싶은 칵테일의 번호를 입력해주세요 : "))
