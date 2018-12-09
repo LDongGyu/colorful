@@ -10,7 +10,6 @@ import csv
 
 cocktail_list = np.loadtxt('cocktail.csv', delimiter=',',dtype=object) # 칵테일 리스트
 cocktail_list = cocktail_list[:, 6]
-print(cocktail_list)
 
 cocktail_info_taste = {1: "깔끔", 2: "단맛", 3:"상큼", 4:"새콤", 5:"신맛", 6:"쓴맛", 7:"짠맛"}
 cocktail_info_alchol = {1: "맥주정도", 2:"소주정도", 3:"양주정도", 4:"제일 쌘거"}
@@ -29,7 +28,7 @@ while True:
         mouthfeel = int(input("식감 : 0.물 1.약간 걸쭉 2.걸쭉 3.부드러움 "))
         base = int(input("기주 : 0.데킬라 1.럼 2.리큐르 3.맥주 4.보드카 5.브랜디 6.샴페인 7.와인 8.위스키 9.진 "))
 
-        cocktail_data = np.loadtxt('cocktail.csv', delimiter=',', dtype=np.int32)
+        cocktail_data = np.loadtxt('cocktail.csv', delimiter=',', dtype=np.object)
         cocktail_x_data = cocktail_data[:, 0:5]
         cocktail_y_data = cocktail_data[:, 7:]
 
@@ -53,15 +52,35 @@ while True:
                 # if step % 400 == 0:
                 #     print(step, sess.run(cocktail_cost, feed_dict={cocktail_X:cocktail_x_data,cocktail_Y:cocktail_y_data}))
             recommend1 = sess.run(cocktail_hypothesis, feed_dict={cocktail_X: [[taste, alchol, soda ,mouthfeel, base]]})
-            print("cocktail recommend : ",cocktail_list[sess.run(tf.argmax(recommend1,1)+1)])
+            print("cocktail recommend : ",cocktail_list[sess.run(tf.argmax(recommend1,1))])
 
+            f = open('cocktail.csv', 'a', encoding='utf-8', newline='')
+            wr = csv.writer(f)
+            write_data = []
+            write_data.append(taste)
+            write_data.append(alchol)
+            write_data.append(soda)
+            write_data.append(mouthfeel)
+            write_data.append(base)
+            write_data.append(int(sess.run(tf.argmax(recommend1,1)+1)))
+            write_data.append(0)
+
+            for i in range(8,68):
+                if i != int(sess.run(tf.argmax(recommend1,1)+1)+7):
+                    write_data.append(0)
+                else:
+                    write_data.append(1)
+
+            wr.writerow(write_data)
+            f.close()
+        # os.system('CLS')
     elif type== 2: # 비슷한 유저로 추천
         j = 1
-        for i in cocktail_list:
+        for i in range(0,60):
             if j%10 != 0:   # 10개 나열
-                print(j,". ",i," ", end='')
+                print(j,".",cocktail_list[i]," ", end='')
             else: # 10번째에서 개행
-                print(j, ". ", i, " ")
+                print(j, ".", cocktail_list[i], " ")
             j+=1
 
         print("좋아하는 술을 번호로 입력해주세요!")
@@ -96,7 +115,7 @@ while True:
                 # if step % 400 == 0:
                 #     print(step, sess.run(user_cost, feed_dict={user_X:user_x_data,user_Y:user_y_data}))
             recommend2 = sess.run(user_hypothesis, feed_dict={user_X: [[drink1, drink2, drink3 ,drink4, drink5]]})
-            print("user recommend : ", cocktail_list[sess.run(tf.argmax(recommend2,1)+1)])
+            print("user recommend : ", cocktail_list[sess.run(tf.argmax(recommend2,1))])
 
             f = open('user.csv', 'a', encoding='utf-8', newline='')
             wr = csv.writer(f)
@@ -118,17 +137,24 @@ while True:
             f.close()
 
     elif type==3: # 칵테일 정보
+        j = 1
+        for i in range(0,60):
+            if j%10 != 0:   # 10개 나열
+                print(j,".",cocktail_list[i]," ", end='')
+            else: # 10번째에서 개행
+                print(j,".",cocktail_list[i], " ")
+            j+=1
         cocktail_num = int(input("보고싶은 칵테일의 번호를 입력해주세요 : "))
 
         cocktail_data = np.loadtxt('cocktail.csv', delimiter=',', dtype=np.object)
         cocktail_x_data = cocktail_data[:, 0:5]
 
         print("이름 : ", cocktail_list[cocktail_num-1])
-        print("맛 : ", cocktail_info_taste.get(int(cocktail_x_data[int(cocktail_num)][0])))
-        print("도수 : ", cocktail_info_alchol.get(int(cocktail_x_data[int(cocktail_num)][1])))
-        print("탄산 : ", cocktail_info_soda.get(int(cocktail_x_data[int(cocktail_num)][2])))
-        print("식감 : ", cocktail_info_mouthfeel.get(int(cocktail_x_data[int(cocktail_num)][3])))
-        print("기주 : ", cocktail_info_base.get(int(cocktail_x_data[int(cocktail_num)][4])))
+        print("맛 : ", cocktail_info_taste.get(int(cocktail_x_data[int(cocktail_num-1)][0])))
+        print("도수 : ", cocktail_info_alchol.get(int(cocktail_x_data[int(cocktail_num-1)][1])))
+        print("탄산 : ", cocktail_info_soda.get(int(cocktail_x_data[int(cocktail_num-1)][2])))
+        print("식감 : ", cocktail_info_mouthfeel.get(int(cocktail_x_data[int(cocktail_num-1)][3])))
+        print("기주 : ", cocktail_info_base.get(int(cocktail_x_data[int(cocktail_num-1)][4])))
 
     else: # 종료
         break
